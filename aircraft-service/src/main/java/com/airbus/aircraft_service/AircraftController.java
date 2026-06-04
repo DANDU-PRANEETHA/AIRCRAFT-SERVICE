@@ -7,10 +7,10 @@ import java.util.List;
 @RequestMapping("/aircraft")
 public class AircraftController {
 
-    private final AircraftRepository repository;
+    private final AircraftService service;
 
-    public AircraftController(AircraftRepository repository) {
-        this.repository = repository;
+    public AircraftController(AircraftService service) {
+        this.service = service;
     }
 
     @GetMapping
@@ -19,39 +19,31 @@ public class AircraftController {
     }
 
     @PostMapping
-    public Aircraft saveAircraft(@RequestBody Aircraft aircraft) {
-        return repository.save(aircraft);
+    public Aircraft saveAircraft(@RequestBody AircraftRequestDTO dto) {
+        return service.saveAircraft(dto);
     }
 
     @GetMapping("/all")
     public List<Aircraft> getAllAircraft() {
-        return repository.findAll();
+        return service.getAllAircraft();
     }
 
     @GetMapping("/{id}")
     public Aircraft getAircraftById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
+        return service.getAircraftById(id);
     }
 
     @PutMapping("/{id}")
     public Aircraft updateAircraft(@PathVariable Long id,
             @RequestBody Aircraft aircraft) {
 
-        Aircraft existing = repository.findById(id).orElse(null);
-
-        if (existing != null) {
-            existing.setName(aircraft.getName());
-            return repository.save(existing);
-        }
-
-        return null;
+        return service.updateAircraft(id, aircraft);
     }
 
     @DeleteMapping("/{id}")
     public String deleteAircraft(@PathVariable Long id) {
 
-        repository.deleteById(id);
-
+        service.deleteAircraft(id);
         return "Aircraft Deleted";
     }
 }
